@@ -3,14 +3,17 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.UUID;
 
-public class Racun {
+public class Racun implements Searchable{
     private String ID;
     private Timestamp date;
     private Artikli vsiArtikli;
+    private String izdajatelj;
+    private String davcna;
 
-    public Racun() throws NoSuchAlgorithmException {
+    public Racun(String davcna_st, String izdajatelj_rc) throws NoSuchAlgorithmException {
         date = new Timestamp(System.currentTimeMillis());
 
         String HashData = Long.toString(System.nanoTime()) + date.toString();
@@ -19,6 +22,9 @@ public class Racun {
         ID = bytesToHex(hash);
 
         vsiArtikli = new Artikli();
+
+        davcna = davcna_st;
+        izdajatelj = izdajatelj_rc;
     }
 
     public void addArtikel(String ime, BigDecimal cena)
@@ -38,11 +44,27 @@ public class Racun {
         return vsiArtikli;
     }
 
+    public String getIzdajatelj() {
+        return izdajatelj;
+    }
+
+    public void setIzdajatelj(String izdajatelj) {
+        this.izdajatelj = izdajatelj;
+    }
+
+    public String getDavcna() {
+        return davcna;
+    }
+
+    public void setDavcna(String davcna) {
+        this.davcna = davcna;
+    }
+
     @Override
     public String toString() {
         return "Racun{" +
                 "ID=" + ID.toString() +
-                ", date=" + date +
+                ", date=" + new SimpleDateFormat("dd.MM.yy HH:mm").format(date) +
                 ", vsiArtikli=" + vsiArtikli.toString() +
                 ", Skupna Cena Brez DDV=" + vsiArtikli.skupnaCenaBrezDDV() + "€" +
                 ", Skupna Cena Z DDV=" + vsiArtikli.skupnaCenaDDV() + "€" +
@@ -61,5 +83,38 @@ public class Racun {
         }
 
         return hexString.toString();
+    }
+
+    public boolean search(String text)
+    {
+        if(ID.contains(text))
+        {
+            return true;
+        }
+
+        if(date.toString().contains(text))
+        {
+            return true;
+        }
+
+        for(int i = 0; i < vsiArtikli.getSeznamArtiklov().size(); i++)
+        {
+            if(vsiArtikli.getArtikelByIndex(i).search(text))
+            {
+                return true;
+            }
+        }
+
+        if(izdajatelj.contains(text))
+        {
+            return true;
+        }
+
+        if(davcna.contains(text))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

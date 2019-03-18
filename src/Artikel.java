@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.keepautomation.barcode.BarCode;
 import com.keepautomation.barcode.IBarCode;
 
-public class Artikel {
+public class Artikel implements Searchable{
     private String ime;
     private BigDecimal cena;
 
@@ -19,6 +19,31 @@ public class Artikel {
         this.ime = ime;
         this.cena = cena;
         this.kolicina = 1;
+    }
+
+    public boolean search(String text)
+    {
+        if(ime.contains(text))
+        {
+            return true;
+        }
+
+        if(cena.toString().contains(text))
+        {
+            return true;
+        }
+
+        if(getEAN().contains(text))
+        {
+            return true;
+        }
+
+        if(Integer.toString(kolicina).contains(text))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public String getIme() {
