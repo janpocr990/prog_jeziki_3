@@ -45,6 +45,11 @@ public class Podjetje implements Searchable{
         this.davcniZavezanec = davcniZavezanec;
     }
 
+    @Override
+    public String toString() {
+        return getIme();
+    }
+
     public boolean search(String text)
     {
         if(ime.contains(text))

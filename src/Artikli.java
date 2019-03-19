@@ -24,8 +24,8 @@ public class Artikli {
         seznamArtiklov.add(dodaj);
     }
 
-    public void AddArtikel(String ime, BigDecimal cena){
-        Artikel dodaj = new Artikel(ime, cena);
+    public void AddArtikel(String ime, BigDecimal cena, String drzava){
+        Artikel dodaj = new Artikel(ime, cena, drzava);
 
         /*boolean add = true;
 

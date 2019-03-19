@@ -67,12 +67,18 @@ public class Artikel implements Searchable{
 
     public static BigDecimal davncaStopnja = new BigDecimal("1.22");
 
-    public Artikel(String ime, BigDecimal cena) {
+    public Artikel(String ime, BigDecimal cena, String drzava) {
         this.ime = ime;
         this.cena = cena;
         this.kolicina = 1;
-        this.setEAN();
-        this.drzava = Artikel.getDrzavaFromEAN(getEAN());
+        if(drzava != null) {
+            this.drzava = drzava;
+            this.setEAN(drzava);
+        }
+        else {
+            this.setEAN();
+            this.drzava = Artikel.getDrzavaFromEAN(getEAN());
+        }
     }
 
     public boolean search(String text)
@@ -134,13 +140,13 @@ public class Artikel implements Searchable{
 
     public void setEAN(){
         EAN = new BarCode();
-        EAN.setCodeToEncode(GenerateRandomEAN());
+        EAN.setCodeToEncode(GenerateRandomEAN(null));
         EAN.setSymbology(IBarCode.EAN13);
     }
 
-    public void setEAN(String EAN13){
+    public void setEAN(String drzava){
         EAN = new BarCode();
-        EAN.setCodeToEncode(EAN13);
+        EAN.setCodeToEncode(GenerateRandomEAN(drzava));
         EAN.setSymbology(IBarCode.EAN13);
     }
 
@@ -239,6 +245,31 @@ public class Artikel implements Searchable{
         return "";
     }
 
+    public static String drzavaToCode(String drzava) {
+        String out = "";
+
+        for(int i = 0; i < drzave.length; i++) {
+            if(drzave[i].toLowerCase().equals(drzava.toLowerCase()))
+            {
+                out = getDrzavaByIndex(i);
+                break;
+            }
+        }
+
+        if(out.length() == 1)
+        {
+            return "00" + out;
+        }
+        else if(out.length() == 2)
+        {
+            return "0" + out;
+        }
+        else
+        {
+            return out;
+        }
+    }
+
     public static String getDrzavaByIndex(int i) {
         String koda = kode[i];
         String out =  koda;
@@ -267,9 +298,17 @@ public class Artikel implements Searchable{
         }
     }
 
-    public static String GenerateRandomEAN() {
+    public static String GenerateRandomEAN(String drzava) {
 
-        String randomTwelve = getDrzavaByIndex(ThreadLocalRandom.current().nextInt(0, kode.length)); //Slovenia
+        String randomTwelve = "";
+
+        if(drzava != null) {
+            randomTwelve = drzavaToCode(drzava);
+
+        }
+        else {
+            randomTwelve = getDrzavaByIndex(ThreadLocalRandom.current().nextInt(0, kode.length));
+        }
 
         randomTwelve += Integer.toString(ThreadLocalRandom.current().nextInt(10000, 100000));
         randomTwelve += Integer.toString(ThreadLocalRandom.current().nextInt(1000, 10000));
@@ -308,8 +347,6 @@ public class Artikel implements Searchable{
         int checkDigit = (10 - (sum % 10)) % 10;
         randomTwelve += Integer.toString(checkDigit);
 
-        BigInteger EAN = new BigInteger(randomTwelve);
-
-        return EAN.toString();
+        return randomTwelve;
     }
 }

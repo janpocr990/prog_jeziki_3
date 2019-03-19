@@ -1,35 +1,27 @@
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.UUID;
 
 public class Racun implements Searchable{
     private String ID;
     private Timestamp date;
     private Artikli vsiArtikli;
-    private String izdajatelj;
     private String davcna;
+    private Podjetje izdajatelj;
 
-    public Racun(String davcna_st, String izdajatelj_rc) throws NoSuchAlgorithmException {
+    public Racun(String davcna, Podjetje izdajatelj)  {
         date = new Timestamp(System.currentTimeMillis());
 
-        String HashData = Long.toString(System.nanoTime()) + date.toString();
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] hash = digest.digest(HashData.toString().getBytes(StandardCharsets.UTF_8));
-        ID = bytesToHex(hash);
+        ID = java.util.UUID.randomUUID().toString();
 
         vsiArtikli = new Artikli();
 
-        davcna = davcna_st;
-        izdajatelj = izdajatelj_rc;
+        this.izdajatelj = izdajatelj;
+        this.davcna = davcna;
     }
 
-    public void addArtikel(String ime, BigDecimal cena)
-    {
-        vsiArtikli.AddArtikel(ime, cena);
+    public void addArtikel(String ime, BigDecimal cena, String drzava) {
+        vsiArtikli.AddArtikel(ime, cena, drzava);
     }
 
     public String getID() {
@@ -44,11 +36,11 @@ public class Racun implements Searchable{
         return vsiArtikli;
     }
 
-    public String getIzdajatelj() {
+    public Podjetje getIzdajatelj() {
         return izdajatelj;
     }
 
-    public void setIzdajatelj(String izdajatelj) {
+    public void setIzdajatelj(Podjetje izdajatelj) {
         this.izdajatelj = izdajatelj;
     }
 
@@ -62,15 +54,28 @@ public class Racun implements Searchable{
 
     @Override
     public String toString() {
-        return "ID za DDV: " + davcna +
-                "\nIzdajatelj: " + izdajatelj +
-                "\n{" +
+        String DDVID = "Brez";
+
+        if(davcna != null){
+            DDVID = davcna;
+        }
+
+        String out =  "Izdal: " + izdajatelj.toString() +
+                "\n" + "ID za DDV: " + izdajatelj.getDavcna() +
+                "\n" + "Izdan za DDV: " + DDVID +
                 "\nRacun št.: " + ID.toString() +
                 ", Datum: " + new SimpleDateFormat("dd.MM.yy HH:mm").format(date) +
                 "\n" + vsiArtikli.toString() +
-                "\nSkupna Cena Brez DDV: " + vsiArtikli.skupnaCenaBrezDDV() + "€" +
-                "\nSkupna Cena Z DDV: " + vsiArtikli.skupnaCenaDDV() + "€" +
-                "\n}";
+                "\nSkupna Cena Brez DDV: " + vsiArtikli.skupnaCenaBrezDDV() + "€";
+
+        if(davcna == null){
+            out += "\nSkupna Cena Z DDV: " + vsiArtikli.skupnaCenaDDV() + "€";
+        }
+        else{
+            out += "\nIzdano davčnemu zavezancu.\n";
+        }
+
+        return out;
     }
 
     private static String bytesToHex(byte[] hash) {
@@ -107,7 +112,7 @@ public class Racun implements Searchable{
             }
         }
 
-        if(izdajatelj.contains(text))
+        if(izdajatelj.search(text))
         {
             return true;
         }
