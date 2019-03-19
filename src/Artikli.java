@@ -27,7 +27,7 @@ public class Artikli {
     public void AddArtikel(String ime, BigDecimal cena){
         Artikel dodaj = new Artikel(ime, cena);
 
-        boolean add = true;
+        /*boolean add = true;
 
         for(int i = 0; i < seznamArtiklov.size(); i++)
         {
@@ -36,11 +36,10 @@ public class Artikli {
                 getArtikelByIndex(i).setKolicina(getArtikelByIndex(i).getKolicina() + 1);
             }
         }
+*/
 
-        if(add == true) {
-            dodaj.setEAN();
             AddArtikel(dodaj);
-        }
+
     }
 
     public int getNumberOfArtikels(String ime) {
@@ -93,7 +92,7 @@ public class Artikli {
 
     @Override
     public String toString() {
-        String ret = "Artikli{";
+        String ret = "";
 
         for(Artikel _artikel : seznamArtiklov)
         {
@@ -101,11 +100,9 @@ public class Artikli {
             BigDecimal skupnaCena = new BigDecimal(numOfArtikli);
             skupnaCena = skupnaCena.multiply(_artikel.getCena());
 
-            ret += _artikel.getIme() + "(EAN: " + _artikel.getEAN() + ")" + ", kol: " + numOfArtikli + ", cena: " + skupnaCena.toString() + "€\n";
+            ret += _artikel.getIme() + "\t" + skupnaCena.toString() + "€\n";
 
         }
-
-        ret += "}";
 
         return ret;
     }

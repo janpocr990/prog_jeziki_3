@@ -62,13 +62,15 @@ public class Racun implements Searchable{
 
     @Override
     public String toString() {
-        return "Racun{" +
-                "ID=" + ID.toString() +
-                ", date=" + new SimpleDateFormat("dd.MM.yy HH:mm").format(date) +
-                ", vsiArtikli=" + vsiArtikli.toString() +
-                ", Skupna Cena Brez DDV=" + vsiArtikli.skupnaCenaBrezDDV() + "€" +
-                ", Skupna Cena Z DDV=" + vsiArtikli.skupnaCenaDDV() + "€" +
-                '}';
+        return "ID za DDV: " + davcna +
+                "\nIzdajatelj: " + izdajatelj +
+                "\n{" +
+                "\nRacun št.: " + ID.toString() +
+                ", Datum: " + new SimpleDateFormat("dd.MM.yy HH:mm").format(date) +
+                "\n" + vsiArtikli.toString() +
+                "\nSkupna Cena Brez DDV: " + vsiArtikli.skupnaCenaBrezDDV() + "€" +
+                "\nSkupna Cena Z DDV: " + vsiArtikli.skupnaCenaDDV() + "€" +
+                "\n}";
     }
 
     private static String bytesToHex(byte[] hash) {

@@ -8,6 +8,7 @@ import com.keepautomation.barcode.IBarCode;
 public class Artikel implements Searchable{
     private String ime;
     private BigDecimal cena;
+    private String drzava;
 
     //za list
     private BarCode EAN;
@@ -19,6 +20,9 @@ public class Artikel implements Searchable{
         this.ime = ime;
         this.cena = cena;
         this.kolicina = 1;
+        this.setEAN();
+
+
     }
 
     public boolean search(String text)
@@ -44,6 +48,10 @@ public class Artikel implements Searchable{
         }
 
         return false;
+    }
+
+    public String getDrzava() {
+        return drzava;
     }
 
     public String getIme() {
@@ -84,6 +92,65 @@ public class Artikel implements Searchable{
         EAN = new BarCode();
         EAN.setCodeToEncode(EAN13);
         EAN.setSymbology(IBarCode.EAN13);
+    }
+
+    public static boolean checkDigit(String EANCode){
+
+        if(EANCode.length() != 13)
+        {
+            return false;
+        }
+
+        if (!EANCode.matches("[0-9]+"))
+        {
+            return false;
+        }
+
+        String idWithoutCheckdigit = new String(EANCode.substring(0, EANCode.length() - 1));
+
+        int currCheckDigit = Integer.parseInt(EANCode.substring(EANCode.length() - 1));
+
+        int sum = 0;
+
+        int first = 3;
+
+        if(idWithoutCheckdigit.length() % 2 == 0){
+            first = 1;
+        }
+
+        for (int i = 0; i < idWithoutCheckdigit.length(); i++) {
+
+            char ch = idWithoutCheckdigit.charAt(i);
+
+            int digit = ch - 48;
+
+            sum += digit * first;
+
+            if(first == 1) {
+                first = 3;
+                continue;
+            }
+
+            if(first == 3){
+                first = 1;
+            }
+        }
+
+        sum = Math.abs(sum) + 10;
+
+        int realCheckDigit = (10 - (sum % 10)) % 10;
+
+        return (currCheckDigit == realCheckDigit);
+    }
+
+    public String getDrzavaFromEAN(String EANCode)
+    {
+        return "";
+    }
+
+    public String getDrzavaByIndex(int i)
+    {
+        return "";
     }
 
     public static String GenerateRandomEAN() {
