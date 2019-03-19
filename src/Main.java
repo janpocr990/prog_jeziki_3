@@ -66,5 +66,9 @@ public class Main {
         {
             System.out.println("Ni validen checkdigit!");
         }
+
+        Artikel test = new Artikel("Rubikova Kocka", new BigDecimal("14.99"));
+
+        System.out.println(test.getDrzava());
     }
 }

@@ -14,6 +14,57 @@ public class Artikel implements Searchable{
     private BarCode EAN;
     private int kolicina;
 
+    public static String [] drzave = new String[]{"USA or Canada", "USA", "USA or Canada",
+            "USA", "Palestine", "France and Monaco", "Bulgaria", "Slovenia",
+            "Croatia", "Bosnia and Herzegovina", "Montenegro",
+            "Kosovo", "Germany", "Japan", "Russia",
+            "Kyrgyzstan", "Taiwan", "Estonia", "Latvia",
+            "Azerbaijan", "Lithuania",
+            "Uzbekistan", "Sri Lanka", "Phillippines",
+            "Belarus", "Ukraine", "Turkemistan", "Moldova",
+            "Armenia", "Georgia", "Kazakhstan", "Tajikistan",
+            "Hong Kong", "Japan", "United Kingdom", "Greece",
+            "Lebanon", "Cyprus", "Albania", "Macedonia",
+            "Malta", "Ireland", "Belgium and Luxembourg",
+            "Portugal", "Iceland", "Denmark", "Poland",
+            "Romania", "Hungary", "South Africa", "Ghana",
+            "Senegal", "Bahrain", "Mauritius", "Morocco",
+            "Algeria", "Nigeria", "Kenya", "Ivory Coast",
+            "Tunisia", "Tanzania", "Syria", "Egypt", "Brunei",
+            "Lybia", "Jordan", "Iran", "Kuwait", "Saudi Arabia",
+            "United Arab Emirates", "Finland", "China",
+            "Norway", "Israel", "Sweden", "Guatemala",
+            "El Salvador", "Honduras", "Nicaragua",
+            "Costa Rica", "Panama", "Dominican Republic",
+            "Mexico", "Canada", "Venezuela", "Switzerland and Liechtenstein",
+            "Colombia", "Uruguay", "Peru", "Bolivia", "Argentina",
+            "Chile", "Paraguay", "Ecuador", "Brazil", "Italy, San Marino and Vatican City",
+            "Spain and Andorra", "Cuba", "Slovakia", "Czech Republic", "Serbia",
+            "Mongolia", "North Koreas", "Turkey", "Netherlands", "South Korea",
+            "Cambodia", "Thailand", "Singapore", "India", "Vietnam", "Pakistan", "Indonesia",
+            "Austria", "Australia", "New Zealand", "Malaysia", "Macau"};
+
+    public static String [] kode = new String[]{"0-19", "30-39", "60-99", "100-139",
+            "275", "300-379", "380", "383", "385", "387", "389", "390",
+            "400-440", "450-459", "460-469", "470", "471",
+            "474", "475", "476", "477", "478", "479", "480",
+            "481", "482", "483", "484", "485", "486", "487",
+            "488", "489", "490-499", "500-509", "520-521",
+            "528", "529", "530", "531", "535", "539", "540-549",
+            "560", "569", "570-579", "590", "594", "599", "600-601",
+            "603", "604", "608", "609", "611", "613", "615",
+            "616", "618", "619", "620", "621", "622", "623",
+            "624", "625", "626", "627", "628",
+            "629", "640-649", "690-699", "700-709", "729",
+            "730-739", "740", "741", "742", "743", "744",
+            "745", "746", "750", "754-755", "759", "760-769",
+            "770-771", "773", "775", "777", "778-779",
+            "780", "784", "786", "789-790", "800-839",
+            "840-849", "850", "858", "859", "860", "865", "867",
+            "868-869", "870-879", "880", "884", "885", "888",
+            "890", "893", "896", "899", "900-919", "930-939",
+            "940-949", "955", "958"};
+
     public static BigDecimal davncaStopnja = new BigDecimal("1.22");
 
     public Artikel(String ime, BigDecimal cena) {
@@ -21,8 +72,7 @@ public class Artikel implements Searchable{
         this.cena = cena;
         this.kolicina = 1;
         this.setEAN();
-
-
+        this.drzava = Artikel.getDrzavaFromEAN(getEAN());
     }
 
     public boolean search(String text)
@@ -143,19 +193,83 @@ public class Artikel implements Searchable{
         return (currCheckDigit == realCheckDigit);
     }
 
-    public String getDrzavaFromEAN(String EANCode)
-    {
+    public static String getDrzavaFromEAN(String EANCode) {
+        if(EANCode.length() != 13)
+        {
+            return "";
+        }
+
+        if (!EANCode.matches("[0-9]+"))
+        {
+            return "";
+        }
+
+        int countryCode = Integer.parseInt(EANCode.substring(0, 3));
+
+        for(int i = 0; i < kode.length; i++)
+        {
+            String koda = kode[i];
+
+            if(koda.contains("-"))
+            {
+                String [] koda_split = koda.split("-");
+
+                int from = Integer.parseInt(koda_split[0]);
+                int to = Integer.parseInt(koda_split[1]);
+
+                for(int j = from; j <= to; j++)
+                {
+                    if(countryCode == j)
+                    {
+                        return drzave[i];
+                    }
+                }
+            }
+            else
+            {
+                int code = Integer.parseInt(koda);
+
+                if(countryCode == code)
+                {
+                    return drzave[i];
+                }
+            }
+        }
+
         return "";
     }
 
-    public String getDrzavaByIndex(int i)
-    {
-        return "";
+    public static String getDrzavaByIndex(int i) {
+        String koda = kode[i];
+        String out =  koda;
+
+        if(koda.contains("-")) {
+            String[] koda_split = koda.split("-");
+
+            int from = Integer.parseInt(koda_split[0]);
+            int to = Integer.parseInt(koda_split[1]);
+
+            out = Integer.toString(ThreadLocalRandom.current().nextInt(from, to + 1));
+
+        }
+
+        if(out.length() == 1)
+        {
+            return "00" + out;
+        }
+        else if(out.length() == 2)
+        {
+            return "0" + out;
+        }
+        else
+        {
+            return out;
+        }
     }
 
     public static String GenerateRandomEAN() {
 
-        String randomTwelve = "383"; //Slovenia
+        String randomTwelve = getDrzavaByIndex(ThreadLocalRandom.current().nextInt(0, kode.length)); //Slovenia
 
         randomTwelve += Integer.toString(ThreadLocalRandom.current().nextInt(10000, 100000));
         randomTwelve += Integer.toString(ThreadLocalRandom.current().nextInt(1000, 10000));
