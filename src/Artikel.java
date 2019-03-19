@@ -83,23 +83,19 @@ public class Artikel implements Searchable{
 
     public boolean search(String text)
     {
-        if(ime.contains(text))
-        {
+        if(ime.contains(text)) {
             return true;
         }
 
-        if(cena.toString().contains(text))
-        {
+        if(cena.toString().contains(text)) {
             return true;
         }
 
-        if(getEAN().contains(text))
-        {
+        if(getEAN().contains(text)) {
             return true;
         }
 
-        if(Integer.toString(kolicina).contains(text))
-        {
+        if(Integer.toString(kolicina).contains(text)) {
             return true;
         }
 

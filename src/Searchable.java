@@ -1,3 +1,3 @@
 public interface Searchable {
-    public boolean search(String text);
+    boolean search(String text);
 }

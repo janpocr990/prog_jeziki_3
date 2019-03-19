@@ -52,18 +52,15 @@ public class Podjetje implements Searchable{
 
     public boolean search(String text)
     {
-        if(ime.contains(text))
-        {
+        if(ime.contains(text)) {
             return true;
         }
 
-        if(davcna.contains(text))
-        {
+        if(davcna.contains(text)) {
             return true;
         }
 
-        if(maticnaStevilka.contains(text))
-        {
+        if(maticnaStevilka.contains(text)) {
             return true;
         }
 

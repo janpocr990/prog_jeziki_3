@@ -98,31 +98,25 @@ public class Racun implements Searchable{
 
     public boolean search(String text)
     {
-        if(ID.contains(text))
-        {
+        if(ID.contains(text)) {
             return true;
         }
 
-        if(date.toString().contains(text))
-        {
+        if(date.toString().contains(text)) {
             return true;
         }
 
-        for(int i = 0; i < vsiArtikli.getSeznamArtiklov().size(); i++)
-        {
-            if(vsiArtikli.getArtikelByIndex(i).search(text))
-            {
+        for(int i = 0; i < vsiArtikli.getSeznamArtiklov().size(); i++) {
+            if(vsiArtikli.getArtikelByIndex(i).search(text)) {
                 return true;
             }
         }
 
-        if(izdajatelj.search(text))
-        {
+        if(izdajatelj.search(text)) {
             return true;
         }
 
-        if(davcna.contains(text))
-        {
+        if(davcna.contains(text)) {
             return true;
         }
 
