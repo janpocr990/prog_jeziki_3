@@ -24,6 +24,10 @@ public class Racun implements Searchable{
         vsiArtikli.AddArtikel(ime, cena, drzava);
     }
 
+    public void addArtikel(Artikel artikel) {
+        vsiArtikli.AddArtikel(artikel);
+    }
+
     public String getID() {
         return ID;
     }
@@ -64,7 +68,7 @@ public class Racun implements Searchable{
                 "\n" + "ID za DDV: " + izdajatelj.getDavcna() +
                 "\n" + "Izdan za DDV: " + DDVID +
                 "\nRacun št.: " + ID.toString() +
-                ", Datum: " + new SimpleDateFormat("dd.MM.yy HH:mm").format(date) +
+                "\tDatum: " + new SimpleDateFormat("dd.MM.yy HH:mm").format(date) +
                 "\n" + vsiArtikli.toString() +
                 "\nSkupna Cena Brez DDV: " + vsiArtikli.skupnaCenaBrezDDV() + "€";
 

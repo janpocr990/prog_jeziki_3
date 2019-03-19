@@ -38,12 +38,15 @@ public class Main {
         System.out.println(drugiRacun.toString());
         System.out.println(tretjiRacun.toString());
 
-        if(!Artikel.checkDigit("8392019283410"))
-        {
+        if(!Artikel.checkDigit("8392019283410")) {
             System.out.println("Ni validen checkdigit!");
         }
 
         Artikel rubikovaKocka = new Artikel("Rubikova Kocka", new BigDecimal("14.99"), "Canada");
+
+        if(rubikovaKocka.search(rubikovaKocka.getEAN())) {
+            System.out.println("EAN za rubikovo kocko je bil najden!");
+        }
 
         System.out.println("Country(" + rubikovaKocka.getIme() + "): " + rubikovaKocka.getDrzava() + ", EAN13: " + rubikovaKocka.getEAN());
         System.out.println("Extracted country from EAN13: " + Artikel.getDrzavaFromEAN(rubikovaKocka.getEAN()));
