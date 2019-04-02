@@ -109,10 +109,10 @@ public class Racun implements Searchable{
         }
 
         if(kupon != null){
-            try {
-                out += "\nCena je s kuponom veljavnim do \n" + new SimpleDateFormat("dd.MM.yy").format(Helper.GetCouponVeljavnost(kupon));
-            } catch (ParseException e) {
-                e.printStackTrace();
+            out += "\nCena je s kuponom veljavnim do " + new SimpleDateFormat("dd.MM.yy").format(veljaDo) + "\n";
+
+            if(date.after(veljaDo)){
+                out += "Kupon ne velja več!\n";
             }
         }
 

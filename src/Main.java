@@ -113,5 +113,11 @@ public class Main {
         System.out.println(cetrtiRacun.toString());
         cetrtiRacun.setKupon(10, "100419");
         System.out.println(cetrtiRacun.toString());
+
+        cetrtiRacun.setKupon(20, "110419");
+        System.out.println(cetrtiRacun.toString());
+
+        cetrtiRacun.setKupon(30, "010419");
+        System.out.println(cetrtiRacun.toString());
     }
 }
