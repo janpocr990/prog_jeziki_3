@@ -1,9 +1,15 @@
+import com.google.gson.annotations.Expose;
+
 import java.util.regex.Pattern;
 
 public class Podjetje implements Searchable{
+    @Expose
     private String ime;
+    @Expose
     private String davcna;
+    @Expose
     private String maticnaStevilka;
+    @Expose
     private boolean davcniZavezanec;
 
     public Podjetje(String ime, String davcna, String maticnaStevilka, boolean davcniZavezanec) {

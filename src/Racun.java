@@ -1,5 +1,8 @@
+import com.google.gson.annotations.Expose;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class Racun implements Searchable{
@@ -8,6 +11,7 @@ public class Racun implements Searchable{
     private Artikli vsiArtikli;
     private String davcna;
     private Podjetje izdajatelj;
+    private String kupon;
 
     public Racun(String davcna, Podjetje izdajatelj)  {
         date = new Timestamp(System.currentTimeMillis());
@@ -18,10 +22,23 @@ public class Racun implements Searchable{
 
         this.izdajatelj = izdajatelj;
         this.davcna = davcna;
+        this.kupon = null;
+    }
+
+    public String getKupon() {
+        return kupon;
+    }
+
+    public void setKupon(int procent, String veljaDo) {
+        this.kupon = Helper.GenerateCouponEAN(procent, veljaDo);
     }
 
     public void addArtikel(String ime, BigDecimal cena, String drzava) {
         vsiArtikli.AddArtikel(ime, cena, drzava);
+    }
+
+    public void addArtikel(String ime, BigDecimal cena, String drzava, int teza) {
+        vsiArtikli.AddArtikel(ime, cena, drzava, teza);
     }
 
     public void addArtikel(Artikel artikel) {
@@ -64,19 +81,39 @@ public class Racun implements Searchable{
             DDVID = davcna;
         }
 
-        String out =  "Izdal: " + izdajatelj.toString() +
-                "\n" + "ID za DDV: " + izdajatelj.getDavcna() +
-                "\n" + "Izdan za DDV: " + DDVID +
-                "\nRacun št.: " + ID.toString() +
-                "\tDatum: " + new SimpleDateFormat("dd.MM.yy HH:mm").format(date) +
-                "\n" + vsiArtikli.toString() +
-                "\nSkupna Cena Brez DDV: " + vsiArtikli.skupnaCenaBrezDDV() + "€";
+        int procent_popusta = 0;
+        Timestamp veljaDo = null;
+
+        try {
+            procent_popusta = (kupon != null ? Helper.GetCouponPopust(kupon) : 0);
+            veljaDo = (kupon != null ? Helper.GetCouponVeljavnost(kupon) : null);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        String out = null;
+            out = "Izdal: " + izdajatelj.toString() +
+                    "\n" + "ID za DDV: " + izdajatelj.getDavcna() +
+                    "\n" + "Izdan za DDV: " + DDVID +
+                    "\nRacun št.: " + ID.toString() +
+                    "\tDatum: " + new SimpleDateFormat("dd.MM.yy HH:mm").format(date) +
+                    "\n" + vsiArtikli.toString() +
+                    "\nSkupna Cena Brez DDV: " + vsiArtikli.skupnaCenaBrezDDV(procent_popusta, veljaDo) + "€";
+
 
         if(davcna == null){
-            out += "\nSkupna Cena Z DDV: " + vsiArtikli.skupnaCenaDDV() + "€";
+            out += "\nSkupna Cena Z DDV: " + vsiArtikli.skupnaCenaDDV(procent_popusta, veljaDo) + "€";
         }
         else{
-            out += "\nIzdano davčnemu zavezancu.\n";
+            out += "\nIzdano davčnemu zavezancu.";
+        }
+
+        if(kupon != null){
+            try {
+                out += "\nCena je s kuponom veljavnim do \n" + new SimpleDateFormat("dd.MM.yy").format(Helper.GetCouponVeljavnost(kupon));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
 
         return out;
